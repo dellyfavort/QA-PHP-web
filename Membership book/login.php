@@ -1,40 +1,42 @@
 <?php
 session_start();
+include "db.php";
 
 $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $email = $_POST["email"];
+    $email = strtolower(trim($_POST["email"]));
     $password = $_POST["password"];
 
+    // Validasi domain kampus
     if (!str_ends_with($email, "@upitra.ac.id")) {
-        $error = "Gunakan email @upitra.ac.id";
-    } else {
+        $error = "Gunakan email kampus (@upitra.ac.id)";
+    }
 
-        if (!file_exists("users.json")) {
-            $error = "Belum ada akun terdaftar";
-        } else {
+    if ($error == "") {
 
-            $users = json_decode(file_get_contents("users.json"), true);
-            $valid = false;
+        $query = "SELECT * FROM userlogin WHERE email='$email'";
+        $result = mysqli_query($conn, $query);
 
-            foreach ($users as $u) {
-                if ($u["email"] == $email && $u["password"] == $password) {
-                    $valid = true;
-                    break;
-                }
-            }
+        if (mysqli_num_rows($result) == 1) {
 
-            if ($valid) {
-                $_SESSION["login"] = true;
-                $_SESSION["email"] = $email;
+            $user = mysqli_fetch_assoc($result);
+
+            if (password_verify($password, $user["password"])) {
+
+                $_SESSION["username"] = $user["username"];
+                $_SESSION["email"] = $user["email"];
 
                 header("Location: home.php");
                 exit;
+
             } else {
-                $error = "Email atau password salah";
+                $error = "Password salah!";
             }
+
+        } else {
+            $error = "Email tidak terdaftar!";
         }
     }
 }
@@ -44,38 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html>
 <head>
 <title>Login Member</title>
-
-<style>
-body {
-    margin:0;
-    font-family:Arial;
-    background:linear-gradient(135deg,#4facfe,#00f2fe);
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
-.container {
-    background:white;
-    padding:35px;
-    border-radius:15px;
-    width:320px;
-    text-align:center;
-}
-input {
-    width:100%;
-    padding:10px;
-    margin:10px 0;
-}
-button {
-    width:100%;
-    padding:12px;
-    background:#4facfe;
-    color:white;
-    border:none;
-}
-.error { color:red; }
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -84,15 +55,35 @@ button {
 <h2>Login Member</h2>
 
 <form method="POST">
-    <input type="email" name="email" placeholder="Email" required>
-    <input type="password" name="password" placeholder="Password" required>
+
+    <input type="email" name="email"
+           placeholder="Email (@upitra.ac.id)" required>
+
+    <input type="password" name="password"
+           placeholder="Password" required>
+
     <button type="submit">Login</button>
+
 </form>
 
-<div class="error"><?php echo $error; ?></div>
+ <!-- Hanya muncul jika ada error -->
+    <?php if (!empty($error)): ?>
+    <div class="error">
+        <?php echo htmlspecialchars($error); ?>
+    </div>
+    <?php endif; ?>
+
 
 <br>
+
 <a href="daftar.php">Belum punya akun? Daftar</a>
+
+<br><br>
+
+<!--  LINK RESET DI DALAM CONTAINER -->
+<p>
+    <a href="reset_password.php">Lupa Password?</a>
+</p>
 
 </div>
 </body>
