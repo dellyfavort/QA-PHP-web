@@ -12,9 +12,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Generate email otomatis
     $email = $username . "@upitra.ac.id";
 
-    // =========================
+    
     // VALIDASI PASSWORD KUAT
-    // =========================
+    
     if (strlen($password) < 8) {
         $error = "Password minimal 8 karakter";
     }
@@ -31,9 +31,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $error = "Harus ada simbol";
     }
 
-    // =========================
+    
     // CEK USER SUDAH ADA
-    // =========================
+    
     if ($error == "") {
 
         $cek = mysqli_query($conn,
@@ -44,12 +44,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    // =========================
     // SIMPAN KE DATABASE
-    // =========================
+    
     if ($error == "") {
 
-        // Hash password (disarankan)
+        // Hash password
         $hashPassword = password_hash($password, PASSWORD_DEFAULT);
 
         $query = "INSERT INTO userlogin (username, email, password)
@@ -92,14 +91,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 </form>
 
-<!-- ✅ ERROR - Hanya muncul jika ada error -->
+<!-- Hanya muncul jika ada error -->
     <?php if (!empty($error)): ?>
     <div class="error">
         <?php echo htmlspecialchars($error); ?>
     </div>
     <?php endif; ?>
 
-    <!-- ✅ SUCCESS - Hanya muncul jika sukses -->
+    <!-- Hanya muncul jika sukses -->
     <?php if (!empty($success)): ?>
     <div class="success">
         <?php echo htmlspecialchars($success); ?>
@@ -112,7 +111,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <br><br>
 
-<!--  LINK RESET (DI DALAM CONTAINER) -->
+<!--  LINK RESET DALAM CONTAINER -->
 <p>
     <a href="reset_password.php">Lupa Password?</a>
 </p>

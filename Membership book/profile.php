@@ -53,7 +53,7 @@ $resultKomentar = mysqli_query($conn, $queryKomentar);
     <div class="profile-container">
         <h2>Profil Member</h2>
 
-        <!-- ✅ PROFILE INFO (Dibungkus div) -->
+        <!--PROFILE INFO dibungkus div -->
         <div class="profile-info">
             <p><b>Username :</b> <?php echo htmlspecialchars($user["username"]); ?></p>
             <p><b>Email :</b> <?php echo htmlspecialchars($user["email"]); ?></p>
@@ -71,7 +71,7 @@ $resultKomentar = mysqli_query($conn, $queryKomentar);
                 </div>
             <?php endwhile; ?>
         <?php else: ?>
-            <!-- ✅ Tanpa background box -->
+            <!-- Tanpa background box -->
             <p class="no-comment">Belum ada komentar</p>
         <?php endif; ?>
 
